@@ -1,0 +1,26 @@
+{
+  "name": "angular",
+  "version": "1.0.0",
+  "description": "Angular lesson",
+  "main": "angular.intensive/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oleksandrstarov/angular_intensive.git"
+  },
+  "keywords": [
+    "angular",
+    "learn"
+  ],
+  "author": "OS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oleksandrstarov/angular_intensive/issues"
+  },
+  "homepage": "https://github.com/oleksandrstarov/angular_intensive#readme",
+  "dependencies": {
+    "bower": "^1.7.9"
+  }
+}
