@@ -1,4 +1,3 @@
-//hello
 angular.module('Tracker', ['ui.router', 'ngResource'])
     .config(function ($stateProvider, $urlRouterProvider) {
 
@@ -7,34 +6,77 @@ angular.module('Tracker', ['ui.router', 'ngResource'])
         $stateProvider
             .state('app', {
                 url: '/app',
-                templateUrl: 'Tracker.html',
-                controller: 'TrackerCtrl'
+                abstract: true,
+                templateUrl: 'Tracker.html'
             })
             .state('app.signup', {
                 url: '/signup',
                 templateUrl: 'user/signup.html',
                 controller: 'SignupCtrl'
             })
+            .state('app.logout', {
+                url: '/logout',
+                controller: 'LogoutCtrl'
+            })
+            .state('app.login', {
+                url: '/login',
+                templateUrl: 'user/login.html',
+                controller: 'LoginCtrl'
+            })
+            .state('app.projects', {
+                url: '/projects',
+                abstract: true,
+                template: '<ui-view></ui-view><ui-view name="workspace"></ui-view>'
+            })
+            .state('app.projects.list', {
+                url: '/list',
+                templateUrl: 'projects/projects.html',
+                controller: 'ProjectsCtrl'
+            })
+            .state('app.projects.new', {
+                url: '/new',
+                templateUrl: 'projects/edit.html',
+                controller: 'ProjectEditCtrl'
+            })
+            .state('app.projects.edit', {
+                url: '/:projectId/edit',
+                templateUrl: 'projects/edit.html',
+                controller: 'ProjectEditCtrl'
+            })
+            .state('app.project', {
+                parent: 'app.projects',
+                url: '/:projectId',
+                views: {
+                    '': {
+                        templateUrl: 'projects/show.html',
+                        controller: 'ProjectCtrl'
+                    },
+                    'workspace': {
+                        templateUrl: 'tasks/tasks.html',
+                        controller: 'TasksCtrl'
+                    }
+                }
+            })
 
     })
-    .controller('TrackerCtrl', function ($scope) {
-        $scope.test = 'ok'
+    .config(function ($httpProvider) {
+        $httpProvider.defaults.withCredentials = true;
     })
-    .controller('SignupCtrl', function ($scope, $resource) {
+    .factory('resource', function ($resource) {
+        var baseUrl = 'http://angular.plus1generation.com';
+        return function (url) {
+            arguments[0] = baseUrl + url;
+            return $resource.apply($resource, arguments);
+        };
+    })
+    .run(function ($rootScope, UserService) {
+        $rootScope.UserService = UserService;
 
-        var url = 'http://angular.plus1generation.com/api/auth/signup';
-        var Signup = $resource(url, {}, {
-            xz: {method: 'XZ'}
+        $rootScope.$watch('UserService.user', function (user) {
+            $rootScope.user = user;
         });
 
-        $scope.user = {};
-        $scope.signup = function () {
-
-            new Signup($scope.user).$save().then(function () {
-                console.log(arguments);
-            });
-
-            console.log($scope.user);
-        }
+        UserService.load();
     })
 ;
+
